@@ -161,6 +161,8 @@ button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 .hero-canvas { opacity: 0; transition: opacity 1.5s var(--ease); }
 .hero-canvas[data-ready="true"] { opacity: 1; }
 .hero-art[data-ready="true"] .ice-orbit { opacity: 0.22; }
+.hero-art[data-enabled="false"] .hero-canvas { opacity: 0; }
+.hero-art[data-enabled="false"] .ice-orbit { opacity: 1; }
 .hero-vignette { background: linear-gradient(90deg, var(--hero-mask) 0%, var(--hero-mask) 32%, transparent 67%), linear-gradient(0deg, var(--bg) 0%, transparent 26%); }
 .facts { margin-top: clamp(3.5rem, 7vw, 5rem); display: grid; gap: 1rem; }
 .fact, .svc, .steps li, .tool, .form-grid, .panel { position: relative; background: linear-gradient(155deg, var(--glass-top), transparent 70%), var(--panel); border: 1px solid var(--line); border-radius: 0.75rem; box-shadow: inset 0 1px 0 var(--glass-top), 0 20px 45px -30px var(--shadow); }
@@ -1766,7 +1768,9 @@ else init();
     idle = null;
   }
   function reconcile() {
-    var active = !disposed && onScreen && !document.hidden && policyAllows();
+    var allowed = policyAllows();
+    art.dataset.enabled = String(allowed);
+    var active = !disposed && onScreen && !document.hidden && allowed;
     if (sceneHandle) { sceneHandle.setActive(active); return; }
     if (!active) { cancelIdle(); return; }
     if (pending || idle !== null || document.readyState !== "complete" || !hasWebGL2()) return;
