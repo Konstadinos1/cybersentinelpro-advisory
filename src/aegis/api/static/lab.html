@@ -3,13 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>aegis-mcp attack lab</title>
-  <link rel="stylesheet" href="/lab/static/lab.css">
+  <title>Attack lab | aegis-mcp</title>
+  <meta name="description" content="Run 79 real attack and control cases against the aegis-mcp guard code and read each verdict.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231f5fd1'/%3E%3Cpath d='M16 6l8 3v6c0 5-3.4 8.6-8 11-4.6-2.4-8-6-8-11V9z' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/base.css">
+  <link rel="stylesheet" href="/static/lab.css">
 </head>
 <body>
+  <nav class="nav" aria-label="Primary">
+    <a class="brand" href="/">aegis-mcp</a>
+    <div class="nav-links">
+      <a href="/lab" aria-current="page">Attack lab</a>
+      <a href="https://github.com/Konstadinos1/cybersentinelpro-advisory/blob/main/docs/usage.md" rel="noopener">How to use</a>
+      <a href="https://github.com/Konstadinos1/cybersentinelpro-advisory" rel="noopener">GitHub</a>
+    </div>
+  </nav>
+
   <header class="top">
     <div>
-      <p class="eyebrow">aegis-mcp</p>
       <h1>Attack lab</h1>
       <p class="lede">Each case is a real attack payload run against the real guard code.
         Attacks must be blocked; benign controls must pass untouched.</p>
@@ -32,7 +43,7 @@
     <p class="empty" id="loading">Loading cases...</p>
   </main>
 
-  <footer class="foot">Lab mode only. Keys are random per process and every case runs in an isolated environment.</footer>
-  <script src="/lab/static/lab.js"></script>
+  <footer class="foot">Cases are fixed: nothing you type reaches the guards. Keys are random per process and every case runs in its own isolated environment.</footer>
+  <script src="/static/lab.js"></script>
 </body>
 </html>

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>aegis-mcp: zero-trust guardrails for MCP and agentic AI</title>
+  <meta name="description" content="A security proxy, runtime guardrail engine and red-team suite for Model Context Protocol and agentic AI applications. Run real attacks against the real guard code in your browser.">
+  <meta property="og:title" content="aegis-mcp: zero-trust guardrails for MCP and agentic AI">
+  <meta property="og:description" content="Deterministic security controls between an AI agent and its tools. Run 79 real attack and control cases live.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231f5fd1'/%3E%3Cpath d='M16 6l8 3v6c0 5-3.4 8.6-8 11-4.6-2.4-8-6-8-11V9z' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/base.css">
+  <link rel="stylesheet" href="/static/landing.css">
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="brand" href="/" aria-current="page">aegis-mcp</a>
+    <div class="nav-links">
+      <a href="/lab">Attack lab</a>
+      <a href="https://github.com/Konstadinos1/cybersentinelpro-advisory/blob/main/docs/usage.md" rel="noopener">How to use</a>
+      <a href="https://github.com/Konstadinos1/cybersentinelpro-advisory" rel="noopener">GitHub</a>
+    </div>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <p class="eyebrow">Zero-trust guardrails for MCP and agentic AI</p>
+      <h1>Assume the prompt injection succeeds. Then make it not matter.</h1>
+      <p class="lede">aegis-mcp puts deterministic checks between an AI agent and everything it can
+        touch: tools, shells, databases, vector stores and your users' screens. No check calls a
+        model, so no check can be talked out of its answer.</p>
+      <div class="actions">
+        <a class="button primary" href="/lab">Open the attack lab</a>
+        <a class="button" href="https://github.com/Konstadinos1/cybersentinelpro-advisory" rel="noopener">View the source</a>
+      </div>
+    </header>
+
+    <section class="stats" id="corpus-stats" aria-label="What the attack lab contains" hidden>
+      <div class="stat"><span class="stat-value" id="stat-cases">-</span><span class="stat-label">cases you can run here</span></div>
+      <div class="stat"><span class="stat-value" id="stat-attacks">-</span><span class="stat-label">attacks that must be blocked</span></div>
+      <div class="stat"><span class="stat-value" id="stat-benign">-</span><span class="stat-label">normal requests that must pass</span></div>
+      <div class="stat"><span class="stat-value">0</span><span class="stat-label">model calls in a decision</span></div>
+    </section>
+
+    <section class="try" aria-labelledby="try-title">
+      <div class="try-text">
+        <h2 id="try-title">Try one now</h2>
+        <p>This is a tool definition a malicious MCP server might advertise. It looks like a
+          calculator. The description tells the model to read a local credentials file, pass it
+          out through a hidden parameter, and keep quiet about it.</p>
+        <p>Press the button and this page sends the case to the server, which runs it through the
+          real firewall code and returns the verdict.</p>
+        <button id="try-run" class="primary" type="button">Run this attack</button>
+        <p id="try-status" class="try-status" role="status" aria-live="polite"></p>
+        <div id="try-result" hidden>
+          <p class="panel-label">What the firewall decided</p>
+          <p><span id="try-badge" class="badge"></span></p>
+          <ul id="try-reasons" class="reasons"></ul>
+        </div>
+      </div>
+      <div class="try-panel">
+        <p class="panel-label">What the server advertises</p>
+        <pre id="try-payload">Loading the case...</pre>
+      </div>
+    </section>
+
+    <section aria-labelledby="flow-title">
+      <h2 id="flow-title">Where it sits</h2>
+      <div class="flow">
+        <div class="flow-node">
+          <strong>Agent host and model</strong>
+          <span>Untrusted for authorisation. Assumed to follow any instruction that reaches it.</span>
+        </div>
+        <div class="flow-arrow" aria-hidden="true">&rarr;</div>
+        <div class="flow-node flow-core">
+          <strong>aegis-mcp</strong>
+          <span>Scan and pin tools. Authorise the human. Enforce budgets. Validate output.</span>
+        </div>
+        <div class="flow-arrow" aria-hidden="true">&rarr;</div>
+        <div class="flow-node">
+          <strong>Tools, shell, SQL, vector store, user</strong>
+          <span>Only approved tools, validated commands, tenant-scoped data and redacted text get through.</span>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="modules-title">
+      <h2 id="modules-title">What it stops</h2>
+      <div class="cards">
+        <article class="card">
+          <h3>MCP firewall</h3>
+          <p>Poisoned tool descriptions, payloads hidden in parameter schemas and tool output,
+            invisible-character smuggling, and tools that change after approval.</p>
+          <p class="refs"><span class="ref">LLM01</span><span class="ref">LLM04</span><span class="ref">ASI02</span><span class="ref">ASI04</span></p>
+          <a href="/lab?module=mcp_firewall">Run these cases</a>
+        </article>
+        <article class="card">
+          <h3>Agency guard</h3>
+          <p>An agent using its own broad access for a user who lacks it, high-impact actions with
+            no human sign-off, replayed or altered approvals, runaway loops and token draining.</p>
+          <p class="refs"><span class="ref">LLM03</span><span class="ref">LLM06</span><span class="ref">ASI03</span><span class="ref">ASI08</span><span class="ref">ASI09</span></p>
+          <a href="/lab?module=agency_guard">Run these cases</a>
+        </article>
+        <article class="card">
+          <h3>Output sanitization</h3>
+          <p>Secrets, personal data and system-prompt markers in responses and reasoning traces.
+            Shell and SQL injection through model output. Image-link exfiltration. Hallucinated
+            package names.</p>
+          <p class="refs"><span class="ref">LLM02</span><span class="ref">LLM07</span><span class="ref">LLM08</span><span class="ref">LLM10</span><span class="ref">ASI05</span></p>
+          <a href="/lab?module=io_sanitization">Run these cases</a>
+        </article>
+        <article class="card">
+          <h3>RAG guard</h3>
+          <p>One tenant reading another's documents, instructions planted in the knowledge base,
+            and stored chunks edited after they were checked.</p>
+          <p class="refs"><span class="ref">LLM05</span><span class="ref">LLM09</span><span class="ref">ASI06</span></p>
+          <a href="/lab?module=rag_guard">Run these cases</a>
+        </article>
+      </div>
+      <p class="note">IDs refer to the OWASP Top 10 for LLM Applications 2026 and the OWASP Top 10
+        for Agentic Applications.
+        <a href="https://github.com/Konstadinos1/cybersentinelpro-advisory/blob/main/docs/control-mapping.md" rel="noopener">Full mapping, including MITRE ATLAS and NIST</a>.</p>
+    </section>
+
+    <section aria-labelledby="rules-title">
+      <h2 id="rules-title">Design rules</h2>
+      <dl class="rules">
+        <div><dt>Default deny</dt><dd>Unknown tools are withheld, unknown roles get nothing, and anything that cannot be parsed is rejected.</dd></div>
+        <div><dt>Authorise the human, not the agent</dt><dd>Every decision uses the verified user's roles and tenant. The agent's own credentials are never consulted.</dd></div>
+        <div><dt>Approvals cover one exact action</dt><dd>A human approval is tied to one tool call with one set of arguments, and works once.</dd></div>
+        <div><dt>Model output is untrusted input</dt><dd>It is parsed and checked against an allowlist before it reaches a shell, a database or a browser.</dd></div>
+        <div><dt>Every attack is a regression test</dt><dd>The cases in the lab run on every pull request. A missed attack or a blocked normal request fails the build.</dd></div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="limits-title">
+      <h2 id="limits-title">What it is not</h2>
+      <p class="prose">This is a reference implementation, and it says so. The poisoning scanner is
+        pattern-based, so new phrasing can get past it; pinning is the control that does not depend
+        on recognising the attack. Runtime state is held in memory. It has not been independently
+        audited.
+        <a href="https://github.com/Konstadinos1/cybersentinelpro-advisory#limitations" rel="noopener">The full list is in the README</a>,
+        and the
+        <a href="https://github.com/Konstadinos1/cybersentinelpro-advisory/blob/main/docs/threat-model.md" rel="noopener">threat model</a>
+        states the residual risk for each control.</p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Built by <a href="https://github.com/Konstadinos1" rel="noopener">Konstadinos</a>. MIT licensed.
+      This demo runs a fixed set of cases only: nothing you type reaches the guards, the guard API
+      is not exposed here, and keys are random per process.</p>
+  </footer>
+  <script src="/static/landing.js"></script>
+</body>
+</html>
