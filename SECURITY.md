@@ -35,3 +35,12 @@ without authentication alongside the guard API and enables interactive API docs.
 No real credential is committed. Secret-shaped test fixtures are assembled from
 fragments at runtime (`src/aegis/redteam/lab.py`) so that they exercise the detectors
 without being valid or matching secret-scanner patterns in the source tree.
+
+This matters most for formats with no checksum. A Google API key is just `AIza` followed
+by 35 characters, so a scanner cannot tell a made-up test string from a live key and
+raises an alert either way. A test (`test_no_google_key_shaped_literal_is_committed`)
+fails the build if such a literal is ever added.
+
+If a real key is ever committed: revoke it at the provider first. Making the repository
+private or deleting the commit does not undo the exposure, because clones, forks and
+caches may already hold it.

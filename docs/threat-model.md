@@ -53,6 +53,8 @@ signing keys, model-weight tampering, and denial of service against aegis-mcp it
 | T19 | Poisoned document stored in the knowledge base | Writer role, source allowlist, content scan at ingestion | RT-RAG-001 to 003 |
 | T20 | Cross-tenant or cross-role retrieval | Structural partitioning plus retrieval-time re-assertion | RT-RAG-004, 005 |
 | T21 | Index modified after ingestion | Per-chunk digest bound to tenant and source | RT-RAG-006 |
+| T22 | Probing queries, or a backend whose isolation has failed | Honeypot records that no legitimate query should surface | RT-RAG-007 |
+| T23 | Query text tries to widen the tenant filter | Tenant is taken from the token only; the question is never parsed for scope | RT-RAG-008 |
 
 ## Residual risk
 

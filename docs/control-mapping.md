@@ -15,7 +15,7 @@ findings, audit events and red-team reports.
 | LLM06 | Unbounded Consumption | Step, recursion, token and cost ceilings; loop detection | circuit breaker trip reasons |
 | LLM07 | Misinformation | Package recommendations verified against a trusted registry (slopsquatting) | AEGIS-SINK-PKG-001, 002 |
 | LLM08 | Hidden Context Exposure | Canary redaction, reasoning-trace removal | AEGIS-DLP-CANARY, AEGIS-DLP-REASONING |
-| LLM09 | Vector and Embedding Weaknesses | Per-tenant partitions, role-scoped chunks, retrieval-time tenant assertion | AEGIS-RAG-010 |
+| LLM09 | Vector and Embedding Weaknesses | Per-tenant partitions, role-scoped chunks, retrieval-time tenant assertion, honeypot records | AEGIS-RAG-010, 012 |
 | LLM10 | Improper Output Handling | Shell, SQL and Markdown sink validators | AEGIS-SINK-SH-*, AEGIS-SINK-SQL-*, AEGIS-SINK-MD-001 |
 
 ## OWASP Top 10 for Agentic Applications
