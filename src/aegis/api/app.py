@@ -88,7 +88,8 @@ def create_app(
         request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
         response = await call_next(request)
-        if not request.url.path.startswith("/docs"):
+        # Swagger UI needs CDN scripts the policy forbids; it exists only in lab mode.
+        if not (lab and request.url.path.startswith("/docs")):
             for header, value in SECURITY_HEADERS.items():
                 response.headers.setdefault(header, value)
         return response

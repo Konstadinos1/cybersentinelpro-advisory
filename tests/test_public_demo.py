@@ -69,7 +69,17 @@ def test_public_demo_does_not_mount_the_guard_api(demo: TestClient, path: str) -
 
 @pytest.mark.parametrize("path", ["/docs", "/openapi.json", "/redoc"])
 def test_public_demo_has_no_api_docs(demo: TestClient, path: str) -> None:
-    assert demo.get(path).status_code == 404
+    response = demo.get(path)
+    assert response.status_code == 404
+    # Found on the live site: the 404 for /docs used to skip the security headers.
+    assert "default-src 'none'" in response.headers["Content-Security-Policy"]
+    assert response.headers["X-Frame-Options"] == "DENY"
+
+
+def test_lab_mode_docs_page_is_exempt_from_the_csp_it_cannot_meet(client: TestClient) -> None:
+    response = client.get("/docs")
+    assert response.status_code == 200
+    assert "Content-Security-Policy" not in response.headers
 
 
 def test_run_endpoint_ignores_any_request_body(demo: TestClient) -> None:

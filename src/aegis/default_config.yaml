@@ -47,3 +47,5 @@ sinks:
 
 rag:
   trusted_source_hosts: [docs.example.com, wiki.example.com]
+  # Plant a decoy record containing this marker; retrieving it raises AEGIS-RAG-012.
+  honeypot_markers: ["HONEYPOT-7c1e"]

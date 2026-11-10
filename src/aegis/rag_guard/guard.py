@@ -55,9 +55,17 @@ def _source_host(source: str) -> str:
 class RagGuard:
     """Wraps a ``TenantVectorStore`` with ingestion and retrieval controls."""
 
-    def __init__(self, store: TenantVectorStore, trusted_source_hosts: frozenset[str]) -> None:
+    def __init__(
+        self,
+        store: TenantVectorStore,
+        trusted_source_hosts: frozenset[str],
+        honeypot_markers: frozenset[str] = frozenset(),
+    ) -> None:
         self._store = store
         self._trusted_hosts = trusted_source_hosts
+        # Strings planted in decoy records no legitimate query should surface.
+        # Seeing one in a result means isolation or relevance filtering failed.
+        self._honeypot_markers = honeypot_markers
 
     def ingest(
         self,
@@ -123,6 +131,13 @@ class RagGuard:
                     Severity.CRITICAL,
                     "Chunk modified after ingestion",
                     chunk.chunk_id,
+                )
+            ]
+        if any(marker in chunk.text for marker in self._honeypot_markers):
+            audit_event("rag.honeypot_hit", tenant=identity.tenant_id, subject=identity.subject)
+            return [
+                _finding(
+                    "AEGIS-RAG-012", Severity.CRITICAL, "Honeypot record retrieved", chunk.chunk_id
                 )
             ]
         return [

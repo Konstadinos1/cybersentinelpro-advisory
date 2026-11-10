@@ -16,6 +16,8 @@ from aegis.core.findings import Severity
 CARD_MIN_DIGITS = 13
 CARD_MAX_DIGITS = 19
 SIN_DIGITS = 9
+IBAN_MIN_CHARS = 15
+IBAN_MAX_CHARS = 34
 LUHN_DOUBLE_OVERFLOW = 9
 
 
@@ -44,6 +46,26 @@ def _valid_card(match_text: str) -> bool:
 def _valid_sin(match_text: str) -> bool:
     digits = _digits_only(match_text)
     return len(digits) == SIN_DIGITS and luhn_valid(digits)
+
+
+def _valid_us_ssn(match_text: str) -> bool:
+    """Reject number ranges the SSA never issues, which are common in dummy data."""
+    area, group, serial = match_text.split("-")
+    return (
+        area not in ("000", "666")
+        and not area.startswith("9")
+        and group != "00"
+        and serial != "0000"
+    )
+
+
+def iban_valid(candidate: str) -> bool:
+    """ISO 13616 mod-97 check: move four characters to the end, map A=10..Z=35."""
+    compact = re.sub(r"\s", "", candidate).upper()
+    if not IBAN_MIN_CHARS <= len(compact) <= IBAN_MAX_CHARS or not compact.isalnum():
+        return False
+    rearranged = compact[4:] + compact[:4]
+    return int("".join(str(int(character, 36)) for character in rearranged)) % 97 == 1
 
 
 @dataclass(frozen=True)
@@ -81,6 +103,23 @@ SECRET_DETECTORS: tuple[Detector, ...] = (
     _detector("LLM_API_KEY", Severity.CRITICAL, r"\bsk-(?:ant-|proj-)?[A-Za-z0-9_-]{20,}"),
     _detector("SLACK_TOKEN", Severity.CRITICAL, r"\bxox[abprs]-[A-Za-z0-9-]{10,}"),
     _detector("STRIPE_KEY", Severity.CRITICAL, r"\b[sr]k_(?:live|test)_[A-Za-z0-9]{16,}"),
+    # Google API keys have no checksum, so any string of this shape is treated
+    # as one. That is also why none may appear literally in this repository.
+    _detector("GOOGLE_API_KEY", Severity.CRITICAL, r"\bAIza[0-9A-Za-z_-]{35}\b"),
+    _detector(
+        "AWS_SECRET_KEY",
+        Severity.CRITICAL,
+        r"\baws.{0,40}?[\"']?([0-9A-Za-z/+]{40})(?![0-9A-Za-z/+])",
+        group=1,
+        flags=re.IGNORECASE,
+    ),
+    _detector(
+        "BEARER_TOKEN",
+        Severity.HIGH,
+        r"\bauthorization\b[\"'\s:]{0,4}bearer\s+([A-Za-z0-9._-]{10,})",
+        group=1,
+        flags=re.IGNORECASE,
+    ),
     _detector("ETH_PRIVATE_KEY", Severity.CRITICAL, r"\b0x[a-fA-F0-9]{64}\b"),
     _detector(
         "JWT",
@@ -110,6 +149,13 @@ PII_DETECTORS: tuple[Detector, ...] = (
         Severity.HIGH,
         r"\b\d{3}[ -]?\d{3}[ -]?\d{3}\b",
         validator=_valid_sin,
+    ),
+    _detector("US_SSN", Severity.HIGH, r"\b\d{3}-\d{2}-\d{4}\b", validator=_valid_us_ssn),
+    _detector(
+        "IBAN",
+        Severity.HIGH,
+        r"\b[A-Z]{2}\d{2}(?: ?[A-Z0-9]{4}){2,7}(?: ?[A-Z0-9]{1,3})?\b",
+        validator=iban_valid,
     ),
     _detector(
         "PHONE_NUMBER",

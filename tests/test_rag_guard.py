@@ -207,6 +207,23 @@ def test_cross_tenant_chunk_from_a_buggy_backend_is_caught(guard: RagGuard) -> N
     assert "AEGIS-RAG-010" in _rule_ids(result.findings)
 
 
+def test_honeypot_record_is_dropped_and_reported(store: TenantVectorStore) -> None:
+    guard = RagGuard(store, frozenset({"docs.example.com"}), frozenset({"HONEYPOT-7c1e"}))
+    writer = identity(roles=WRITER_ROLES)
+    guard.ingest(writer, chunk_id="decoy", text="HONEYPOT-7c1e recovery codes", source=SOURCE)
+    guard.ingest(writer, chunk_id="real", text="Recovery codes are rotated weekly.", source=SOURCE)
+    result = guard.retrieve(writer, "recovery codes")
+    assert [item.chunk.chunk_id for item in result.chunks] == ["real"]
+    assert "HONEYPOT-7c1e" not in result.context
+    assert "AEGIS-RAG-012" in _rule_ids(result.findings)
+
+
+def test_without_honeypot_markers_nothing_is_treated_as_a_decoy(guard: RagGuard) -> None:
+    writer = identity(roles=WRITER_ROLES)
+    guard.ingest(writer, chunk_id="d", text="HONEYPOT-7c1e recovery codes", source=SOURCE)
+    assert len(guard.retrieve(writer, "recovery codes").chunks) == 1
+
+
 def test_irrelevant_chunks_are_not_returned(guard: RagGuard) -> None:
     writer = identity(roles=WRITER_ROLES)
     guard.ingest(writer, chunk_id="d", text=REFUND_TEXT, source=SOURCE)

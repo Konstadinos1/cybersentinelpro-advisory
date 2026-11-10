@@ -49,6 +49,7 @@ class SinkConfig(BaseModel):
 
 class RagConfig(BaseModel):
     trusted_source_hosts: frozenset[str] = frozenset()
+    honeypot_markers: frozenset[str] = frozenset()
 
 
 class AegisConfig(BaseModel):
@@ -147,7 +148,7 @@ def build_services(
         dlp=DlpRedactor(canaries=secrets_.canaries),
         packages=PackageAllowlist(config.sinks.packages),
         rag_store=store,
-        rag=RagGuard(store, config.rag.trusted_source_hosts),
+        rag=RagGuard(store, config.rag.trusted_source_hosts, config.rag.honeypot_markers),
     )
 
 

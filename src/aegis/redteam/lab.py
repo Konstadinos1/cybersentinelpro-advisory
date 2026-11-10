@@ -29,6 +29,9 @@ PLACEHOLDERS: dict[str, str] = {
     "GITHUB_TOKEN": "ghp_" + "a1B2c3D4e5F6g7H8i9J0" + "k1L2m3N4o5P6q7R8",
     "LLM_KEY": "sk-" + "ant-" + "api03-" + "abcdefghijklmnopqrstuvwx",
     "STRIPE_KEY": "sk_" + "live_" + "4eC39HqLyjWDarjtT1zdp7dc",
+    "AWS_SECRET": "wJalrXUtnFEMI/K7MDENG/" + "bPxRfiCY" + "EXAMPLEKEY",
+    "GOOGLE_KEY": "AIza" + "Sy" + "D3mo" + "0123456789abcdefghijklmnopqrs",
+    "BEARER": "Authorization: Bearer " + "tok_" + "9f8e7d6c5b4a39281706",
     "ETH_KEY": "0x" + "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318",
     "PRIVATE_KEY": "-----BEGIN RSA "
     + "PRIVATE KEY-----\nMIIEow\n-----END RSA "

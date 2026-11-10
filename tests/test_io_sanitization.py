@@ -13,7 +13,7 @@ from aegis.io_sanitization import (
     validate_shell_command,
     validate_sql,
 )
-from aegis.io_sanitization.detectors import luhn_valid
+from aegis.io_sanitization.detectors import iban_valid, luhn_valid
 from aegis.io_sanitization.sinks import edit_distance, normalize_package_name
 from aegis.redteam.lab import PLACEHOLDERS
 
@@ -36,6 +36,7 @@ def redactor() -> DlpRedactor:
         ("LLM_KEY", "LLM_API_KEY"),
         ("STRIPE_KEY", "STRIPE_KEY"),
         ("ETH_KEY", "ETH_PRIVATE_KEY"),
+        ("GOOGLE_KEY", "GOOGLE_API_KEY"),
         ("PRIVATE_KEY", "PRIVATE_KEY"),
     ],
 )
@@ -45,6 +46,41 @@ def test_secret_is_redacted(redactor: DlpRedactor, placeholder: str, label: str)
     assert secret not in result.text
     assert f"[REDACTED:{label}]" in result.text
     assert result.text.endswith(" end")
+
+
+def test_aws_secret_key_is_redacted_but_its_label_is_kept(redactor: DlpRedactor) -> None:
+    secret = PLACEHOLDERS["AWS_SECRET"]
+    result = redactor.redact(f"aws_secret_access_key = {secret}")
+    assert secret not in result.text
+    assert result.text.startswith("aws_secret_access_key = ")
+
+
+def test_bearer_header_token_is_redacted_but_the_scheme_is_kept(redactor: DlpRedactor) -> None:
+    result = redactor.redact(PLACEHOLDERS["BEARER"] + " was sent")
+    assert result.text == "Authorization: Bearer [REDACTED:BEARER_TOKEN] was sent"
+
+
+def test_google_key_shape_needs_the_full_length(redactor: DlpRedactor) -> None:
+    truncated = PLACEHOLDERS["GOOGLE_KEY"][:-5]
+    assert redactor.redact(f"key {truncated} end").text == f"key {truncated} end"
+
+
+def test_no_google_key_shaped_literal_is_committed() -> None:
+    """Secret scanners flag this shape even in tests, so fixtures are built at runtime."""
+    import re  # noqa: PLC0415
+    from pathlib import Path  # noqa: PLC0415
+
+    root = Path(__file__).resolve().parent.parent
+    pattern = re.compile(r"AIza[0-9A-Za-z_-]{35}")
+    tracked = [*root.glob("src/**/*"), *root.glob("tests/**/*"), *root.glob("docs/**/*.md")]
+    offenders = [
+        str(path.relative_to(root))
+        for path in tracked
+        if path.is_file()
+        and path.suffix in {".py", ".yaml", ".md", ".json", ".js", ".html"}
+        and pattern.search(path.read_text(encoding="utf-8"))
+    ]
+    assert offenders == []
 
 
 def test_jwt_is_redacted(redactor: DlpRedactor) -> None:
@@ -85,6 +121,9 @@ def test_short_canary_is_refused() -> None:
         ("call (514) 555-0199", "PHONE_NUMBER"),
         ("call 450-555-0142", "PHONE_NUMBER"),
         ("call +1 438 555 0177", "PHONE_NUMBER"),
+        ("SSN 219-09-9999", "US_SSN"),
+        ("IBAN GB82 WEST 1234 5698 7654 32", "IBAN"),
+        ("IBAN DE89370400440532013000", "IBAN"),
     ],
 )
 def test_pii_is_redacted(redactor: DlpRedactor, text: str, label: str) -> None:
@@ -98,6 +137,10 @@ def test_pii_is_redacted(redactor: DlpRedactor, text: str, label: str) -> None:
         "Order 123456789 shipped.",  # nine digits but fails the Luhn check
         "Card 4242 4242 4242 4241 is invalid.",  # sixteen digits, bad checksum
         "Version 1.2.3 released on 2026-11-09.",
+        "IBAN GB00 WEST 1234 5698 7654 32 has a bad check digit.",
+        "Tickets 000-12-3456, 666-12-3456 and 912-34-5678 are not SSNs.",
+        "Ranges 123-00-4567 and 123-45-0000 are never issued.",
+        "AWS Lambda in us-east-1 is healthy and running version 12.",
         "",
     ],
 )
@@ -110,6 +153,14 @@ def test_ordinary_text_is_left_untouched(redactor: DlpRedactor, text: str) -> No
 def test_pii_redaction_can_be_disabled() -> None:
     text = "mail jean@example.com"
     assert DlpRedactor(redact_pii=False).redact(text).text == text
+
+
+def test_iban_checksum_reference_values() -> None:
+    assert iban_valid("GB82 WEST 1234 5698 7654 32")
+    assert iban_valid("de89370400440532013000")
+    assert not iban_valid("GB82 WEST 1234 5698 7654 33")
+    assert not iban_valid("GB82WEST")
+    assert not iban_valid("GB82 WEST 1234 5698 7654 3!")
 
 
 def test_luhn_reference_values() -> None:
