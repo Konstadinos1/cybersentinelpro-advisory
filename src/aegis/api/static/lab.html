@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>aegis-mcp attack lab</title>
+  <link rel="stylesheet" href="/lab/static/lab.css">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <p class="eyebrow">aegis-mcp</p>
+      <h1>Attack lab</h1>
+      <p class="lede">Each case is a real attack payload run against the real guard code.
+        Attacks must be blocked; benign controls must pass untouched.</p>
+    </div>
+    <button id="run-all" class="primary" type="button">Run all cases</button>
+  </header>
+
+  <section class="stats" aria-live="polite">
+    <div class="stat"><span class="stat-value" id="stat-run">0 / 0</span><span class="stat-label">cases run</span></div>
+    <div class="stat"><span class="stat-value" id="stat-attacks">-</span><span class="stat-label">attacks blocked</span></div>
+    <div class="stat"><span class="stat-value" id="stat-benign">-</span><span class="stat-label">benign allowed</span></div>
+    <div class="stat"><span class="stat-value" id="stat-failed">0</span><span class="stat-label">guard failures</span></div>
+  </section>
+
+  <nav class="filters" id="filters" aria-label="Filter by module"></nav>
+
+  <p id="banner" class="banner" role="alert" hidden></p>
+
+  <main id="cases" class="cases">
+    <p class="empty" id="loading">Loading cases...</p>
+  </main>
+
+  <footer class="foot">Lab mode only. Keys are random per process and every case runs in an isolated environment.</footer>
+  <script src="/lab/static/lab.js"></script>
+</body>
+</html>
