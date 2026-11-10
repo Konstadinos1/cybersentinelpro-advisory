@@ -197,7 +197,7 @@ checking, the test suite on Python 3.12 and 3.13, and a dependency audit.
 
 | Check | Result |
 | --- | --- |
-| Tests | 449 passing (`uv run pytest`) |
+| Tests | 450 passing (`uv run pytest`) |
 | Coverage | 99% line and branch; build fails below 90% |
 | Types | `mypy --strict`, no errors |
 | Lint | `ruff` including the `S` (bandit) rule set |
@@ -237,7 +237,7 @@ src/aegis/
   redteam/           corpus, lab environment, runner, reports
   api/               FastAPI app and the attack lab UI
   cli.py             aegis redteam | scan | pin | verify | approve | serve
-tests/               449 tests, one per corpus case plus unit and API tests
+tests/               450 tests, one per corpus case plus unit and API tests
 lab/                 example poisoned and clean MCP servers, dev token helper, walkthrough
 docs/                how-to-use guide, architecture, threat model, control mapping, deployment
 main.py              entry point for the live demo site
