@@ -1,0 +1,19 @@
+# Runs the guard API (production mode). Secrets come from your shell or an
+# untracked .env file; compose refuses to start if either is missing.
+#
+#   export AEGIS_IDENTITY_SECRET="$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')"
+#   export AEGIS_APPROVAL_KEY="$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')"
+#   docker compose up --build
+services:
+  aegis:
+    build: .
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      AEGIS_IDENTITY_SECRET: ${AEGIS_IDENTITY_SECRET:?set AEGIS_IDENTITY_SECRET (32+ characters)}
+      AEGIS_APPROVAL_KEY: ${AEGIS_APPROVAL_KEY:?set AEGIS_APPROVAL_KEY (32+ characters)}
+      AEGIS_CANARIES: ${AEGIS_CANARIES:-}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
