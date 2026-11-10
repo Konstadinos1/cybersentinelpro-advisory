@@ -131,7 +131,7 @@ def test_every_github_link_points_at_the_one_canonical_repository() -> None:
         links.update(
             re.findall(r"https://github\.com/Konstadinos1/[A-Za-z0-9._-]+", path.read_text())
         )
-    assert links == {canonical}
+    assert {link.removesuffix(".git") for link in links} == {canonical}
 
 
 # --------------------------------------------------------------- rate limit
