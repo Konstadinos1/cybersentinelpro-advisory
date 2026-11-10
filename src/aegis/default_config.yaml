@@ -1,0 +1,49 @@
+# Default aegis-mcp configuration. Copy, edit and point AEGIS_CONFIG_PATH at it.
+# Nothing in this file is secret; keys and canaries come from the environment.
+
+policy:
+  version: 1
+  default_impact: high        # unknown tools need a human
+  tools:
+    - { pattern: "search_*",     impact: low,  description: "Read-only search" }
+    - { pattern: "read_*",       impact: low,  description: "Read-only access" }
+    - { pattern: "get_*",        impact: low,  description: "Read-only access" }
+    - { pattern: "add",          impact: low,  description: "Arithmetic demo tool" }
+    - { pattern: "delete_*",     impact: high, description: "Destructive" }
+    - { pattern: "db_write",     impact: high, description: "Database mutation" }
+    - { pattern: "http_request", impact: high, description: "External network egress" }
+    - { pattern: "transfer_*",   impact: high, description: "Moves funds" }
+  roles:
+    viewer:
+      allow: ["search_*", "read_*", "get_*", "add"]
+    support-agent:
+      allow: ["search_*", "read_*", "get_*", "add"]
+      deny: ["read_ledger"]
+    operator:
+      allow: ["search_*", "read_*", "get_*", "add", "delete_*", "db_write", "http_request"]
+    treasury:
+      allow: ["read_*", "get_*", "transfer_*"]
+
+budget:
+  max_steps: 25
+  max_recursion_depth: 3
+  max_total_tokens: 200000
+  max_cost_usd: 5.0
+  max_identical_states: 3
+
+sinks:
+  shell:
+    allowed_binaries: [ls, cat, git, grep]
+    forbidden_arguments:
+      git: ["-c", "--upload-pack", "--exec", "--config"]
+  sql:
+    dialect: postgres
+    allowed_statements: [select]
+    allowed_tables: [orders, customers]
+  image_hosts: [cdn.example.com]
+  packages:
+    pypi: [requests, fastapi, pydantic, numpy, pandas, sqlglot, pyjwt, httpx]
+    npm: [react, next, zod, typescript, tailwindcss]
+
+rag:
+  trusted_source_hosts: [docs.example.com, wiki.example.com]

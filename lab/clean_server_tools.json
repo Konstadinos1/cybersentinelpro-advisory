@@ -1,0 +1,29 @@
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "tools": [
+      {
+        "name": "get_weather",
+        "description": "Returns the current weather for a city.",
+        "inputSchema": {
+          "type": "object",
+          "properties": { "city": { "type": "string", "maxLength": 80 } },
+          "required": ["city"]
+        }
+      },
+      {
+        "name": "search_docs",
+        "description": "Full-text search over the public documentation.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": { "type": "string", "maxLength": 200 },
+            "limit": { "type": "integer", "minimum": 1, "maximum": 20 }
+          },
+          "required": ["query"]
+        }
+      }
+    ]
+  }
+}
