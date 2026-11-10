@@ -102,8 +102,9 @@ HIGH     AEGIS-TP-001 search_docs [inputSchema/properties/query/description] Ins
 ...
 ```
 
-A guided walkthrough, including pinning a server and catching a rug pull, is in
-[lab/README.md](lab/README.md).
+**Full step-by-step instructions are in the [how-to-use guide](docs/usage.md)**: checking an MCP
+server, running the service, approving high-impact calls, writing your own policy and
+adding your own attack cases. A shorter lab walkthrough is in [lab/README.md](lab/README.md).
 
 ### Seeing what the reviewer cannot
 
@@ -191,7 +192,7 @@ checking, the test suite on Python 3.12 and 3.13, and a dependency audit.
 
 | Check | Result |
 | --- | --- |
-| Tests | 387 passing (`uv run pytest`) |
+| Tests | 392 passing (`uv run pytest`) |
 | Coverage | 99% line and branch; build fails below 90% |
 | Types | `mypy --strict`, no errors |
 | Lint | `ruff` including the `S` (bandit) rule set |
@@ -230,9 +231,9 @@ src/aegis/
   redteam/           corpus, lab environment, runner, reports
   api/               FastAPI app and the attack lab UI
   cli.py             aegis redteam | scan | pin | verify | approve | serve
-tests/               387 tests, one per corpus case plus unit and API tests
-lab/                 example poisoned and clean MCP servers, walkthrough
-docs/                architecture, threat model, control mapping
+tests/               392 tests, one per corpus case plus unit and API tests
+lab/                 example poisoned and clean MCP servers, dev token helper, walkthrough
+docs/                how-to-use guide, architecture, threat model, control mapping
 ```
 
 ## License
