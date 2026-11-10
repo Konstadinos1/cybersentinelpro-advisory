@@ -4,6 +4,8 @@
 ![Python](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+**Live demo: <https://aegis-mcp-steel.vercel.app>** (run the attacks against the real code in your browser)
+
 A zero-trust security proxy, runtime guardrail engine and CI red-team suite for
 [Model Context Protocol](https://modelcontextprotocol.io) (MCP) and agentic AI applications.
 
@@ -159,8 +161,11 @@ All `/v1` routes except the approval webhook require a bearer identity token.
 | `POST /v1/rag/ingest`, `/v1/rag/query` | Tenant-scoped ingestion and retrieval |
 
 Configuration is a YAML file ([default](src/aegis/default_config.yaml)); key material
-comes only from the environment ([.env.example](.env.example)). Outside lab mode the
+comes only from the environment ([.env.example](.env.example)). Outside the demo modes the
 service refuses to start with a missing or short secret.
+
+The live site runs a third, narrower mode with the guard API switched off entirely. What it
+exposes, and why that is safe to put online, is in [docs/deployment.md](docs/deployment.md).
 
 ## Red-team suite in CI
 
@@ -192,7 +197,7 @@ checking, the test suite on Python 3.12 and 3.13, and a dependency audit.
 
 | Check | Result |
 | --- | --- |
-| Tests | 392 passing (`uv run pytest`) |
+| Tests | 428 passing (`uv run pytest`) |
 | Coverage | 99% line and branch; build fails below 90% |
 | Types | `mypy --strict`, no errors |
 | Lint | `ruff` including the `S` (bandit) rule set |
@@ -231,9 +236,10 @@ src/aegis/
   redteam/           corpus, lab environment, runner, reports
   api/               FastAPI app and the attack lab UI
   cli.py             aegis redteam | scan | pin | verify | approve | serve
-tests/               392 tests, one per corpus case plus unit and API tests
+tests/               428 tests, one per corpus case plus unit and API tests
 lab/                 example poisoned and clean MCP servers, dev token helper, walkthrough
-docs/                how-to-use guide, architecture, threat model, control mapping
+docs/                how-to-use guide, architecture, threat model, control mapping, deployment
+main.py              entry point for the live demo site
 ```
 
 ## License

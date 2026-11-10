@@ -20,9 +20,15 @@ You can expect an acknowledgement within five business days.
 
 In scope: everything under `src/aegis`.
 
+Also in scope: the public demo site and public demo mode (`AEGIS_PUBLIC_DEMO=1`). It is
+meant to face the internet, so reaching the guard API through it, making a visitor-supplied
+payload reach a guard, running script in a visitor's browser, or getting past the rate
+limit from one address are all security bugs. See [docs/deployment.md](docs/deployment.md)
+for what it is designed to expose.
+
 Out of scope: findings that require lab mode (`AEGIS_LAB_MODE=1`) to be enabled on an
-exposed host. Lab mode is documented as unsafe for untrusted networks: it disables
-authentication on the `/lab` routes and enables interactive API docs.
+exposed host. Lab mode is documented as unsafe for untrusted networks: it serves the lab
+without authentication alongside the guard API and enables interactive API docs.
 
 ## Handling of secrets in this repository
 

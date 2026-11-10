@@ -66,6 +66,10 @@ Open <http://127.0.0.1:8080/lab>, expand any row to read the attack payload, and
 Lab mode uses throwaway keys and turns off login for the `/lab` pages. Use it on your own
 machine only.
 
+The same lab is online at <https://aegis-mcp-steel.vercel.app/lab>. That site runs a
+narrower mode with the guard API switched off; [deployment.md](deployment.md) explains
+what it exposes. To run that mode yourself, use `uv run aegis serve --public-demo`.
+
 ## 3. Check an MCP server before you trust it
 
 Save the server's `tools/list` response to a JSON file. Two examples ship in `lab/`.
