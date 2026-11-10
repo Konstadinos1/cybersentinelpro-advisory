@@ -138,6 +138,8 @@ def cmd_serve(args: argparse.Namespace) -> int:
 
     if args.lab:
         os.environ[ENV_PREFIX + "LAB_MODE"] = "1"
+    if args.public_demo:
+        os.environ[ENV_PREFIX + "PUBLIC_DEMO"] = "1"
     uvicorn.run("aegis.api.app:app_from_environment", factory=True, host=args.host, port=args.port)
     return EXIT_OK
 
@@ -181,7 +183,12 @@ def _add_approve_and_serve(commands: Any) -> None:
     serve = commands.add_parser("serve", help="run the HTTP API")
     serve.add_argument("--host", default=DEFAULT_HOST)
     serve.add_argument("--port", type=int, default=DEFAULT_PORT)
-    serve.add_argument("--lab", action="store_true", help="enable the attack lab UI")
+    serve.add_argument("--lab", action="store_true", help="local demo: API, lab UI and docs")
+    serve.add_argument(
+        "--public-demo",
+        action="store_true",
+        help="internet-facing demo: landing page and read-only lab, no API",
+    )
     serve.set_defaults(handler=cmd_serve)
 
 

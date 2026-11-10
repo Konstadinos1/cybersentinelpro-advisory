@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 
 from aegis.agency_guard import UserIdentity
 from aegis.api.app import create_app
+from aegis.api.modes import AppMode
 from aegis.redteam.lab import build_lab_services, mint_token
 from aegis.runtime import Services
 
@@ -20,7 +21,7 @@ def services() -> Services:
 
 @pytest.fixture
 def client(services: Services) -> TestClient:
-    return TestClient(create_app(services, lab_enabled=True))
+    return TestClient(create_app(services, mode=AppMode.LAB))
 
 
 @pytest.fixture

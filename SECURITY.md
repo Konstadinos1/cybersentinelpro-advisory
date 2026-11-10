@@ -20,12 +20,27 @@ You can expect an acknowledgement within five business days.
 
 In scope: everything under `src/aegis`.
 
+Also in scope: the public demo site and public demo mode (`AEGIS_PUBLIC_DEMO=1`). It is
+meant to face the internet, so reaching the guard API through it, making a visitor-supplied
+payload reach a guard, running script in a visitor's browser, or getting past the rate
+limit from one address are all security bugs. See [docs/deployment.md](docs/deployment.md)
+for what it is designed to expose.
+
 Out of scope: findings that require lab mode (`AEGIS_LAB_MODE=1`) to be enabled on an
-exposed host. Lab mode is documented as unsafe for untrusted networks: it disables
-authentication on the `/lab` routes and enables interactive API docs.
+exposed host. Lab mode is documented as unsafe for untrusted networks: it serves the lab
+without authentication alongside the guard API and enables interactive API docs.
 
 ## Handling of secrets in this repository
 
 No real credential is committed. Secret-shaped test fixtures are assembled from
 fragments at runtime (`src/aegis/redteam/lab.py`) so that they exercise the detectors
 without being valid or matching secret-scanner patterns in the source tree.
+
+This matters most for formats with no checksum. A Google API key is just `AIza` followed
+by 35 characters, so a scanner cannot tell a made-up test string from a live key and
+raises an alert either way. A test (`test_no_google_key_shaped_literal_is_committed`)
+fails the build if such a literal is ever added.
+
+If a real key is ever committed: revoke it at the provider first. Making the repository
+private or deleting the commit does not undo the exposure, because clones, forks and
+caches may already hold it.

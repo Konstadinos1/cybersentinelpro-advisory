@@ -1,0 +1,6 @@
+# Not needed at runtime; keeps the function bundle small.
+/tests/
+/docs/
+/lab/
+/.github/
+/reports/

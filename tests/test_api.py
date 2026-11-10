@@ -244,17 +244,20 @@ def test_lab_page_and_assets_have_no_inline_script(client: TestClient) -> None:
     assert page.status_code == 200
     assert "<script src=" in page.text
     assert "onclick" not in page.text
-    script = client.get("/lab/static/lab.js")
+    script = client.get("/static/lab.js")
     assert "innerHTML =" not in script.text
-    assert client.get("/lab/static/lab.css").status_code == 200
-    assert client.get("/lab/static/../app.py").status_code == 404
+    assert client.get("/static/lab.css").status_code == 200
+    assert client.get("/static/../app.py").status_code == 404
 
 
 def test_lab_and_docs_are_absent_outside_lab_mode(services: Services) -> None:
     production = TestClient(create_app(services))
     assert production.get("/lab").status_code == 404
     assert production.get("/lab/api/cases").status_code == 404
+    assert production.get("/").status_code == 404
+    assert production.get("/static/base.css").status_code == 404
     assert production.get("/docs").status_code == 404
+    assert production.get("/openapi.json").status_code == 404
     assert production.get("/healthz").status_code == 200
 
 

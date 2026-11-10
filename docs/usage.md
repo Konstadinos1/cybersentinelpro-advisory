@@ -23,7 +23,7 @@ code in this repository.
 You need Python 3.12 or newer and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-git clone https://github.com/Konstadinos1/cybersentinelpro-advisory.git aegis-mcp
+git clone https://github.com/Konstadinos1/aegis-mcp.git
 ```
 
 ```bash
@@ -42,7 +42,7 @@ uv run aegis --help
 
 ## 2. See it work in two minutes
 
-Run all 79 attack and control cases against the guards:
+Run every attack and control case against the guards:
 
 ```bash
 uv run aegis redteam
@@ -51,7 +51,7 @@ uv run aegis redteam
 The last line should read:
 
 ```text
-79 cases, 0 failed, attacks blocked 100%, benign allowed 100%
+84 cases, 0 failed, attacks blocked 100%, benign allowed 100%
 ```
 
 Or watch it in a browser. Start the lab:
@@ -65,6 +65,10 @@ Open <http://127.0.0.1:8080/lab>, expand any row to read the attack payload, and
 
 Lab mode uses throwaway keys and turns off login for the `/lab` pages. Use it on your own
 machine only.
+
+The same lab is online at <https://aegis-mcp-steel.vercel.app/lab>. That site runs a
+narrower mode with the guard API switched off; [deployment.md](deployment.md) explains
+what it exposes. To run that mode yourself, use `uv run aegis serve --public-demo`.
 
 ## 3. Check an MCP server before you trust it
 
@@ -412,6 +416,7 @@ What each section controls:
 | `sinks.image_hosts` | Hosts images may load from |
 | `sinks.packages` | Trusted package names per ecosystem (`pypi`, `npm`) |
 | `rag.trusted_source_hosts` | Hosts documents may be ingested from |
+| `rag.honeypot_markers` | Strings planted in decoy records. Retrieving one is dropped and reported as `AEGIS-RAG-012` |
 
 Example: let a `billing` role read invoices and issue refunds, with refunds needing
 approval.
@@ -544,7 +549,15 @@ docker run --rm -p 8080:8080 -e AEGIS_IDENTITY_SECRET -e AEGIS_APPROVAL_KEY aegi
 ```
 
 `-e NAME` with no value passes the variable through from your shell, so the secret does
-not appear in the command line or shell history. To use your own policy, mount it and
+not appear in the command line or shell history.
+
+Or use the compose file, which refuses to start without both secrets, binds to localhost
+only, and runs the container read-only with all capabilities dropped:
+
+```bash
+docker compose up --build
+```
+ To use your own policy, mount it and
 point at it:
 
 ```bash

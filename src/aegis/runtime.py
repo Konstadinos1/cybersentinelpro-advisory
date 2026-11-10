@@ -1,7 +1,7 @@
 """Configuration loading and wiring of all guard modules.
 
-Secrets come from the environment only. In lab mode missing secrets are
-generated per process so the demo runs with zero setup; outside lab mode a
+Secrets come from the environment only. In the demo modes missing secrets are
+generated per process so a demo runs with zero setup; outside them a
 missing or short secret is a startup error.
 """
 
@@ -33,6 +33,7 @@ from aegis.rag_guard import HashingEmbedder, RagGuard, TenantVectorStore
 SECRET_MIN_CHARS = 32
 GENERATED_SECRET_BYTES = 48
 ENV_PREFIX = "AEGIS_"
+DEMO_MODE_VARIABLES = ("LAB_MODE", "PUBLIC_DEMO")
 
 
 class ConfigError(Exception):
@@ -48,6 +49,7 @@ class SinkConfig(BaseModel):
 
 class RagConfig(BaseModel):
     trusted_source_hosts: frozenset[str] = frozenset()
+    honeypot_markers: frozenset[str] = frozenset()
 
 
 class AegisConfig(BaseModel):
@@ -146,13 +148,17 @@ def build_services(
         dlp=DlpRedactor(canaries=secrets_.canaries),
         packages=PackageAllowlist(config.sinks.packages),
         rag_store=store,
-        rag=RagGuard(store, config.rag.trusted_source_hosts),
+        rag=RagGuard(store, config.rag.trusted_source_hosts, config.rag.honeypot_markers),
     )
+
+
+def demo_keys_allowed() -> bool:
+    """True in the two demo modes, where throwaway keys are acceptable."""
+    return any(os.environ.get(ENV_PREFIX + name, "") == "1" for name in DEMO_MODE_VARIABLES)
 
 
 def services_from_environment() -> Services:
     """Entry point used by the API process."""
-    lab_mode = os.environ.get(ENV_PREFIX + "LAB_MODE", "") == "1"
     config_path = os.environ.get(ENV_PREFIX + "CONFIG_PATH")
     config = load_config(Path(config_path) if config_path else None)
-    return build_services(config, load_secrets(lab_mode))
+    return build_services(config, load_secrets(demo_keys_allowed()))

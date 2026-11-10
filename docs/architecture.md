@@ -114,6 +114,12 @@ The API is a thin layer over the same service objects. Request models forbid unk
 fields. Responses carry a strict Content-Security-Policy with no inline script or style;
 the lab front end writes all attacker-controlled text with `textContent`.
 
+An instance runs in one of three modes, chosen once at start-up (`api/modes.py`):
+production mounts only the guard API; lab adds the landing page, the attack lab and the
+interactive docs for local use; public demo mounts the landing page and lab **without**
+the guard API or docs, and rate limits case runs. Routes a mode does not need are not
+mounted at all, so they answer 404 instead of relying on an authentication check.
+
 ## Extending
 
 Each stateful component has a narrow interface (`Embedder`, `TenantVectorStore`,

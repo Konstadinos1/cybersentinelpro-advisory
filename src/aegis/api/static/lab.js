@@ -134,15 +134,23 @@ function renderFilters() {
   $("filters").replaceChildren(...buttons);
 }
 
+const RATE_LIMITED = 429;
+
+// Returns false when the server asked us to stop, so a batch can end early.
 async function runOne(item) {
   try {
     const response = await fetch(`/lab/api/cases/${encodeURIComponent(item.id)}/run`, { method: "POST" });
+    if (response.status === RATE_LIMITED) {
+      showBanner("Too many runs from this address. Wait a minute, then continue.");
+      return false;
+    }
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     state.results.set(item.id, await response.json());
   } catch (error) {
     state.results.set(item.id, { case: item, error: error.message, passed: false });
     showBanner("Some cases could not be run. Is the server still up?");
   }
+  return true;
 }
 
 async function runCases(items) {
@@ -153,12 +161,19 @@ async function runCases(items) {
   showBanner("");
   render();
   for (const item of items) {
-    await runOne(item);
+    const keepGoing = await runOne(item);
     render();
+    if (!keepGoing) break;
   }
   state.running = false;
   render();
   restoreFocus($("cases"), focused);
+}
+
+// Lets the landing page link straight to one module: /lab?module=rag_guard
+function filterFromUrl() {
+  const wanted = new URLSearchParams(window.location.search).get("module");
+  return state.cases.some((c) => c.module === wanted) ? wanted : "all";
 }
 
 async function start() {
@@ -171,6 +186,7 @@ async function start() {
     showBanner(`Could not load cases: ${error.message}`);
     return;
   }
+  state.filter = filterFromUrl();
   renderFilters();
   render();
   $("run-all").addEventListener("click", () => {

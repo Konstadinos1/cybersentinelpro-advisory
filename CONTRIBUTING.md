@@ -32,4 +32,6 @@ corpus. CI runs the same steps.
 - Comments explain why a decision was made, not what the line does.
 - Controls fail closed. If something cannot be parsed or verified, deny.
 - No LLM calls in a decision path.
+- No secret-shaped literals, even fake ones. Build them from fragments in
+  `src/aegis/redteam/lab.py`; secret scanners cannot tell a dummy from a live key.
 - Conventional commits (`feat:`, `fix:`, `chore:`, `refactor:`), one logical change each.

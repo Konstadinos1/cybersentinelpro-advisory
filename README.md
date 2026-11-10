@@ -1,8 +1,10 @@
 # aegis-mcp
 
-[![CI](https://github.com/Konstadinos1/cybersentinelpro-advisory/actions/workflows/ci.yml/badge.svg)](https://github.com/Konstadinos1/cybersentinelpro-advisory/actions/workflows/ci.yml)
+[![CI](https://github.com/Konstadinos1/aegis-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Konstadinos1/aegis-mcp/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
+
+**Live demo: <https://aegis-mcp-steel.vercel.app>** (run the attacks against the real code in your browser)
 
 A zero-trust security proxy, runtime guardrail engine and CI red-team suite for
 [Model Context Protocol](https://modelcontextprotocol.io) (MCP) and agentic AI applications.
@@ -23,7 +25,7 @@ screen. No check in this repository calls an LLM.
 | [`agency_guard`](src/aegis/agency_guard) | Confused deputy, unattended high-impact actions, approval replay and argument swapping, runaway loops and token draining | LLM03, LLM06, ASI01, ASI03, ASI08, ASI09 |
 | [`io_sanitization`](src/aegis/io_sanitization) | Secrets, PII and system-prompt canaries in responses and reasoning traces; shell and SQL injection through model output; Markdown image exfiltration; slopsquatted packages | LLM02, LLM07, LLM08, LLM10, ASI05 |
 | [`rag_guard`](src/aegis/rag_guard) | Cross-tenant retrieval, poisoned documents, tampered chunks, role bypass | LLM05, LLM09, ASI06 |
-| [`redteam`](src/aegis/redteam) | Regressions in any of the above: 79 attack and control cases run on every pull request | NIST AI 600-1, SP 800-218A |
+| [`redteam`](src/aegis/redteam) | Regressions in any of the above: 84 attack and control cases run on every pull request | NIST AI 600-1, SP 800-218A |
 
 IDs refer to the OWASP Top 10 for LLM Applications 2026 and the OWASP Top 10 for Agentic
 Applications. The full mapping, including MITRE ATLAS and NIST, is in
@@ -159,8 +161,11 @@ All `/v1` routes except the approval webhook require a bearer identity token.
 | `POST /v1/rag/ingest`, `/v1/rag/query` | Tenant-scoped ingestion and retrieval |
 
 Configuration is a YAML file ([default](src/aegis/default_config.yaml)); key material
-comes only from the environment ([.env.example](.env.example)). Outside lab mode the
+comes only from the environment ([.env.example](.env.example)). Outside the demo modes the
 service refuses to start with a missing or short secret.
+
+The live site runs a third, narrower mode with the guard API switched off entirely. What it
+exposes, and why that is safe to put online, is in [docs/deployment.md](docs/deployment.md).
 
 ## Red-team suite in CI
 
@@ -192,12 +197,13 @@ checking, the test suite on Python 3.12 and 3.13, and a dependency audit.
 
 | Check | Result |
 | --- | --- |
-| Tests | 392 passing (`uv run pytest`) |
+| Tests | 450 passing (`uv run pytest`) |
 | Coverage | 99% line and branch; build fails below 90% |
 | Types | `mypy --strict`, no errors |
 | Lint | `ruff` including the `S` (bandit) rule set |
-| Red team | 79 cases: 66 attacks blocked, 13 benign controls allowed |
+| Red team | 84 cases: 70 attacks blocked, 14 benign controls allowed |
 | Dependencies | `pip-audit` clean at time of writing |
+| Static analysis | CodeQL (`security-extended`) on every pull request |
 
 Run all of it locally with `make check`.
 
@@ -231,9 +237,10 @@ src/aegis/
   redteam/           corpus, lab environment, runner, reports
   api/               FastAPI app and the attack lab UI
   cli.py             aegis redteam | scan | pin | verify | approve | serve
-tests/               392 tests, one per corpus case plus unit and API tests
+tests/               450 tests, one per corpus case plus unit and API tests
 lab/                 example poisoned and clean MCP servers, dev token helper, walkthrough
-docs/                how-to-use guide, architecture, threat model, control mapping
+docs/                how-to-use guide, architecture, threat model, control mapping, deployment
+main.py              entry point for the live demo site
 ```
 
 ## License
