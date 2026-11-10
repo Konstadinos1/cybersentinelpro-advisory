@@ -1,6 +1,6 @@
 # aegis-mcp
 
-[![CI](https://github.com/Konstadinos1/cybersentinelpro-advisory/actions/workflows/ci.yml/badge.svg)](https://github.com/Konstadinos1/cybersentinelpro-advisory/actions/workflows/ci.yml)
+[![CI](https://github.com/Konstadinos1/aegis-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Konstadinos1/aegis-mcp/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 

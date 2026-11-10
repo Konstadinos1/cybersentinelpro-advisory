@@ -115,6 +115,25 @@ def test_every_same_site_link_on_the_landing_page_resolves(demo: TestClient) -> 
         assert demo.get(link).status_code == 200, link
 
 
+def test_every_github_link_points_at_the_one_canonical_repository() -> None:
+    """A rename has to change every link at once; a stray old one would 404."""
+    import re  # noqa: PLC0415
+
+    canonical = "https://github.com/Konstadinos1/aegis-mcp"
+    files = [
+        ROOT / "README.md",
+        ROOT / "pyproject.toml",
+        *(ROOT / "docs").glob("*.md"),
+        *(ROOT / "src" / "aegis" / "api" / "static").glob("*.html"),
+    ]
+    links: set[str] = set()
+    for path in files:
+        links.update(
+            re.findall(r"https://github\.com/Konstadinos1/[A-Za-z0-9._-]+", path.read_text())
+        )
+    assert links == {canonical}
+
+
 # --------------------------------------------------------------- rate limit
 
 

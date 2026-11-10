@@ -23,7 +23,7 @@ code in this repository.
 You need Python 3.12 or newer and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-git clone https://github.com/Konstadinos1/cybersentinelpro-advisory.git aegis-mcp
+git clone https://github.com/Konstadinos1/aegis-mcp.git
 ```
 
 ```bash

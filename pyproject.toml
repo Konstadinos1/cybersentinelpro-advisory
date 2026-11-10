@@ -26,6 +26,11 @@ dependencies = [
 [project.scripts]
 aegis = "aegis.cli:main"
 
+[project.urls]
+Homepage = "https://aegis-mcp-steel.vercel.app"
+Repository = "https://github.com/Konstadinos1/aegis-mcp"
+Documentation = "https://github.com/Konstadinos1/aegis-mcp/blob/main/docs/usage.md"
+
 [dependency-groups]
 dev = [
     "pytest>=8.3",
